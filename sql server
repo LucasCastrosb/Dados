@@ -1,0 +1,583 @@
+CREATE TABLE aluno (
+  idaluno int primary key identity,
+  nome varchar(30) not null,
+  sexo char(1) not null,
+  nascimento date not null,
+  email varchar(30) unique);
+  
+  
+  ALTER TABLE aluno
+  ADD constraint ck_sexo check (sexo in('M','F'));
+  
+  
+  CREATE table endereco (
+    idendereco int primary key identity(100,10),
+    bairro varchar(30),
+    UF char(2) not null,
+    check (UF in('RJ','SP', 'MG')),
+    id_aluno int unique);
+  	
+  
+  alter table endereco
+  add constraint fk_endereco_aluno
+  foreign key (id_aluno) references aluno(idaluno);
+  
+  
+  sp_columns aluno;
+  
+  sp_help aluno
+  
+INSERT INTO endereco VALUES('FLAMENGO','RJ',1)
+INSERT INTO endereco VALUES('MORUMBI','SP',2)
+INSERT INTO endereco VALUES('CENTRO','MG',4)
+INSERT INTO endereco VALUES('bela vista','SP',3)
+
+
+INSERT INTO aluno VALUES('ANDRE','M','1981/12/09','ANDRE@IG.COM')
+INSERT INTO aluno VALUES('ANA','F','1978/03/09','ANA@IG.COM')
+INSERT INTO aluno VALUES('RUI','M','1951/07/09','RUI@IG.COM')
+INSERT INTO aluno VALUES('JOAO','M','2002/11/09','JOAO@IG.COM')  ;
+  
+  
+  
+  CREATE TABLE telefone(
+	idtelefone INT PRIMARY KEY IDENTITY,
+	tipo CHAR(3) NOT NULL,
+	numero VARCHAR(10) NOT NULL,
+	id_aluno INT,
+	CHECK (TIPO IN ('RES','COM','CEL')));
+  
+  INSERT INTO TELEFONE VALUES('CEL','7899889',1)
+INSERT INTO TELEFONE VALUES('RES','4325444',1)
+INSERT INTO TELEFONE VALUES('COM','4354354',2)
+INSERT INTO TELEFONE VALUES('CEL','2344556',2);
+
+  
+  
+select getdate()
+  
+  
+  select a.nome, 
+  isnull(t.tipo, 'SEM') AS TIPO,
+  ISNULL(t.numero, 'NUMERO') AS TELEFONE,
+  e.bairro, e.uf
+  from aluno  a
+  left join telefone t
+  on a.idaluno = t.id_aluno
+  inner join endereco e
+  on a.idaluno = e.id_aluno
+  
+ 
+  select *
+  from endereco
+  
+  
+  select nome, datediff(month, nascimento, getdate())/12 AS Idade
+  from aluno
+  
+  
+  select nome, datename(weekday, nascimento)
+  from aluno
+  
+  select nome, datepart(month, nascimento), datename(month, nascimento)
+  from aluno
+  
+  
+ select dateadd(day, 365, getdate()) 
+  
+  select cast('1' as int) +  cast('1' as int)
+  
+  
+  select nome, charindex('A', nome) AS indice
+  from aluno
+  
+  
+  CREATE TABLE lancamento_contabil (
+    conta INT,
+    valor int,
+    deb_cred char(1))
+  
+  
+  select *from lancamento_contabil
+  
+  
+
+  
+  
+  
+  
+SELECT CONTA,
+SUM(VALOR * (CHARINDEX('C',DEB_CRED) * 2 - 1)) AS SALDO
+FROM LANCAMENTO_CONTABIL
+GROUP BY CONTA
+GO
+  
+  
+  
+CREATE TABLE PRODUTOS(
+	IDPRODUTO INT IDENTITY PRIMARY KEY,
+	NOME VARCHAR(50) NOT NULL,
+	CATEGORIA VARCHAR(30) NOT NULL,
+	PRECO NUMERIC(10,2) NOT NULL
+)
+
+
+CREATE TABLE HISTORICO(
+	IDOPERACAO INT PRIMARY KEY IDENTITY,
+	PRODUTO VARCHAR(50) NOT NULL,
+	CATEGORIA VARCHAR(30) NOT NULL,
+	PRECOANTIGO NUMERIC(10,2) NOT NULL,
+	PRECONOVO NUMERIC(10,2) NOT NULL,
+	DATA DATETIME,
+	USUARIO VARCHAR(30),
+	MENSAGEM VARCHAR(100)
+)
+
+
+  
+INSERT INTO PRODUTOS VALUES('LIVRO SQL SERVER','LIVROS',98.00)
+INSERT INTO PRODUTOS VALUES('LIVRO ORACLE','LIVROS',50.00)
+INSERT INTO PRODUTOS VALUES('LICEN A POWERCENTER','SOFTWARES',45000.00)
+INSERT INTO PRODUTOS VALUES('NOTEBOOK I7','COMPUTADORES',3150.00)
+INSERT INTO PRODUTOS VALUES('LIVRO BUSINESS INTELLIGENCE','LIVROS',90.00)
+
+
+select * from PRODUTOS
+
+select suser_name()
+  
+  
+  
+  
+ 
+CREATE TRIGGER TRG_ATUALIZA_PRECO
+ON DBO.PRODUTOS
+FOR UPDATE
+AS
+		DECLARE @IDPRODUTO INT
+		DECLARE @PRODUTO VARCHAR(30)
+		DECLARE @CATEGORIA VARCHAR(10)
+		DECLARE @PRECO NUMERIC(10,2)
+		DECLARE @PRECONOVO NUMERIC(10,2)
+		DECLARE @DATA DATETIME
+		DECLARE @USUARIO VARCHAR(30)
+		DECLARE @ACAO VARCHAR(100)
+
+		--PRIMEIRO BLOCO
+		SELECT @IDPRODUTO = IDPRODUTO FROM inserted
+		SELECT @PRODUTO = NOME FROM inserted
+		SELECT @CATEGORIA = CATEGORIA FROM inserted
+		SELECT @PRECO = PRECO FROM deleted
+		SELECT @PRECONOVO = PRECO FROM inserted
+
+		--SEGUNDO BLOCO
+		SET @DATA = GETDATE()
+		SET @USUARIO = SUSER_NAME()
+		SET @ACAO = 'VALOR INSERIDO PELA TRIGGER TRG_ATUALIZA_PRECO'
+
+		INSERT INTO HISTORICO
+		(PRODUTO,CATEGORIA,PRECOANTIGO,PRECONOVO,DATA,USUARIO,MENSAGEM)
+		VALUES
+		(@PRODUTO,@CATEGORIA,@PRECO,@PRECONOVO,@DATA,@USUARIO,@ACAO)
+
+		PRINT 'TRIGGER EXECUTADA COM SUCESSO'
+        
+        
+    
+    
+    
+UPDATE PRODUTOS
+SET preco = 100.00
+WHERE idproduto = 1
+
+  
+  SELECT * FROM PRODUTOS
+  select * from historico
+  
+  
+  
+ UPDATE PRODUTos
+ set nome = 'Livro c#'
+ where idproduto = 1
+ 
+  
+  drop trigger TRG_ATUALIZA_PRECO
+  
+  
+  
+  
+  
+  
+  
+CREATE TRIGGER TRG_ATUALIZA_PRECO
+ON DBO.PRODUTOS
+FOR UPDATE AS
+IF UPDATE(PRECO)
+BEGIN
+
+		DECLARE @IDPRODUTO INT
+		DECLARE @PRODUTO VARCHAR(30)
+		DECLARE @CATEGORIA VARCHAR(10)
+		DECLARE @PRECO NUMERIC(10,2)
+		DECLARE @PRECONOVO NUMERIC(10,2)
+		DECLARE @DATA DATETIME
+		DECLARE @USUARIO VARCHAR(30)
+		DECLARE @ACAO VARCHAR(100)
+
+		--PRIMEIRO BLOCO
+		SELECT @IDPRODUTO = IDPRODUTO FROM inserted
+		SELECT @PRODUTO = NOME FROM inserted
+		SELECT @CATEGORIA = CATEGORIA FROM inserted
+		SELECT @PRECO = PRECO FROM deleted
+		SELECT @PRECONOVO = PRECO FROM inserted
+
+		--SEGUNDO BLOCO
+		SET @DATA = GETDATE()
+		SET @USUARIO = SUSER_NAME()
+		SET @ACAO = 'VALOR INSERIDO PELA TRIGGER TRG_ATUALIZA_PRECO'
+
+		INSERT INTO HISTORICO
+		(PRODUTO,CATEGORIA,PRECOANTIGO,PRECONOVO,DATA,USUARIO,MENSAGEM)
+		VALUES
+		(@PRODUTO,@CATEGORIA,@PRECO,@PRECONOVO,@DATA,@USUARIO,@ACAO)
+
+		PRINT 'TRIGGER EXECUTADA COM SUCESSO'
+END
+
+
+
+UPDATE produtos 
+SET PRECO = 300.00
+WHERE idproduto = 2
+
+  
+  
+  
+UPDATE produtos 
+SET nome = 'Livro Java'
+WHERE idproduto = 2
+  
+  
+  
+  CREATE table resultado(
+    idresultado INT primary key identity,
+    resultado INT
+    )
+  
+  
+  INSERt intO resultado
+  values ((select 10+10))
+  
+  
+  DECLARE
+  	@resultado INT
+    SET @resultado = (select 50 + 50)
+    INSERT INTO resultado VALUES (@resultado)
+    PRINT 'VALOR INSERIDO NA TABELA: ' + cast(@resultado as varchar)
+ 
+  select * from resultado
+  
+  
+create table empregado(
+  idempregado int primary key,
+  nome varchar(30),
+  salario money,
+  idgerente int
+  
+  )
+  
+  
+  alter table empregado 
+  add constraint fk_gerente
+  foreign key (idgerente) references empregado(idempregado)
+  
+  
+  INSERT INTO empregado VALUES (1,'clara', 5000.00, null)
+  insert into empregado values (2,'celia', 4000.00,1)
+  insert into empregado values (3,'joao', 4000.00,1)
+  
+  
+  
+  
+  create table hist_salario(
+    idempregado INT,
+    antigosal money,
+    novosal money,
+    data datetime
+    )
+  
+  
+  CREATE TRIGGER tg_salario
+  ON DBO.empregado
+  FOR UPDATE AS
+  IF UPDATE(salario)
+  BEGIN
+  	INSERT INTO hist_salario
+    (idempregado, antigosal, novosal, data)
+    SELECT d.idempregado, d.salario, i.salario, getdate( )
+  	FROM deleted d, inserted i
+    WHERE d.idempregado = i.idempregado
+    
+  END;
+  
+  
+  select * from empregado
+  
+  
+  UPDATE empregado
+  set salario = salario * 1.1
+  
+  
+  select * from hist_salario
+  
+  
+  
+  CREATE TABLE salario_range (
+    minsal money,
+    maxsal money)
+    
+    
+   insert into salario_range
+   values ( 3000.00, 6000.00)
+  
+  
+  
+  
+  
+  
+  
+ 
+  
+  create TRIGGER tg_range
+  ON DBO.empregado
+  FOR INSERT, UPDATE
+  AS 
+  		DECLARE
+        	@minsal money,
+            @maxsal money,
+            @atualsal money
+        
+    SELECT @minsal = minsal, @maxsal = maxsal from salario_range
+  
+  	SELECT @atualsal = i.salario
+    FROM inserted i
+    
+    if (@atualsal < @minsal)
+    BEGIN
+ 		RAISERROR('Salario menor que o piso', 16,1)
+        ROLLBACK TRANSACTION
+    END
+  IF (@atualsal > @maxsal)
+  BEGIN
+  		RAISERROR('Salario maior que o teto', 16,1)
+        ROLLBACK TRANSACTION
+  END;
+  
+  
+  
+  
+  update empregado
+  set salario = 9000.00
+  where idempregado = 1
+  
+  
+    update empregado
+  set salario = 1000.00
+  where idempregado = 1
+  
+  
+  
+  SP_HELPTEXT tg_range
+  
+  
+  
+  CREATE TABLE PESSOA(
+	IDPESSOA INT PRIMARY KEY IDENTITY,
+	NOME VARCHAR(30) NOT NULL,
+	SEXO CHAR(1) NOT NULL CHECK (SEXO IN('M','F')), --ENUM
+	MASCIMENTO DATE NOT NULL)
+  
+  
+  CREATE TABLE TELEFONE(
+	IDTELEFONE INT NOT NULL IDENTITY,
+	TIPO CHAR(3) NOT NULL CHECK ( TIPO IN('CEL','COM')),
+	NUMERO CHAR(10) NOT NULL,
+	ID_PESSOA INT)
+  
+  
+   ALTER TABLE TELEFONE ADD CONSTRAINT FK_TELEFONE_PESSOA
+FOREIGN KEY(ID_PESSOA) REFERENCES PESSOA(IDPESSOA)
+ON DELETE CASCADE
+ 
+
+INSERT INTO PESSOA VALUES('ANTONIO','M','1981-02-13')
+INSERT INTO PESSOA VALUES('DANIEL','M','1985-03-18')
+INSERT INTO PESSOA VALUES('CLEIDE','F','1979-10-13')
+INSERT INTO PESSOA VALUES('MAFRA','M','1981-02-13')
+
+
+
+INSERT INTO TELEFONE VALUES('CEL','9879008',1)
+INSERT INTO TELEFONE VALUES('COM','8757909',1)
+INSERT INTO TELEFONE VALUES('CEL','9875890',2)
+INSERT INTO TELEFONE VALUES('CEL','9347689',2)
+INSERT INTO TELEFONE VALUES('COM','2998689',3)
+INSERT INTO TELEFONE VALUES('COM','2098978',2)
+INSERT INTO TELEFONE VALUES('CEL','9008679',3)
+
+  
+  
+  create proc soma
+AS
+   select 10 + 10 AS SOMA
+
+  EXEC soma
+  
+  
+  CREATE PROC conta @num1 INT, @num2 INT 
+  AS
+  	SELECT @num1 + @num2 AS resultado
+  
+  
+  exec conta 90, 78
+  
+  DROP PROC conta
+  
+  
+  SELECT nome, numero
+  from pessoa p
+  INNER JOIN TELEFONE t
+  ON p.IDPESSOA = t.ID_PESSOA
+  where t.tipo = 'cel'
+  
+  
+  
+  
+  CREATE PROC TELEFONES @TIPO CHAR(3)
+AS
+  SELECT nome, numero
+  from pessoa p
+  INNER JOIN TELEFONE t
+  ON p.IDPESSOA = t.ID_PESSOA
+  where t.tipo = @TIPO
+
+  
+  
+  exec telefones 'CEL'
+  
+  exec telefones 'CEL'
+
+  
+  
+  SELECT TIPO, count(*) as Quantidade
+  FROM telefone
+  group by tipo
+  
+  
+  CREATE PROC GETTIPO @tipo char(3), @contador int OUTPUT
+  AS
+  	SELECT @contador = count(*)
+    FROM TELEFONE
+    where tipo = @tipo
+    
+
+DECLARE @saida INT
+EXEC GETTIPO @tipo = 'CEL', @contador = @saida OUTPUT
+SELECT @SAIDA
+
+  
+ 
+  
+  
+  
+PROCEDURE DE CADASTRO
+
+CREATE PROC cadastro @nome varchar(30), @sexo char(1), @nascimento date,
+@tipo char(3), @numero varchar(10)
+AS
+	DECLARE @fk INT 
+    INSERT INTO pessoa VALUEs (@nome, @sexo, @nascimento)
+    SET @fk = (SELECT idpessoa FROM pessoa where idpessoa = @@IDENTITY)
+    
+    INSERT INTO TELEFONE VALUES(@tipo, @numero, @fk)
+
+
+  
+  
+   INSERT INTO pessoa VALUES ('Mafra', 'M', '1981-02-13')
+select @@identity
+  
+  INSERT INTO pessoa VALUES ('Mafra', 'M', '1981-02-13')
+
+  
+  EXEC cadastro 'jorge', 'M', '1981-01-01', 'CEL', '97273822'
+  
+  select p.*, t.*
+  from pessoa p 
+  inner join telefone t 
+  on p.idpessoa = t.id_pessoa
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
