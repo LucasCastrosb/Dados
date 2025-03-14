@@ -1,0 +1,883 @@
+CREATE table cliente (
+  NOME VARCHAR(30),
+  SEXO CHAR(1),
+  EMAIL VARCHAR(30),
+  CPF INT(11),
+  TELEFONE VARCHAR(30),
+  ENDERECO VARCHAR(100)
+  );
+
+SHOW TABLES;
+DESC cliente;
+
+
+
+INSERT INTO cliente VALUES('ANA','F','ANA@GLOBO.COM',85548962,'548556985','PRES ANTONIO CARLOS - CENTRO - SAO PAULO - SP'),
+                          ('CARLA','F','CARLA@TERATI.COM.BR',7745828,'66587458','SAMUEL SILVA - CENTRO - BELO HORIZONTE - MG');
+                          
+INSERT INTO cliente(NOME,SEXO,ENDERECO,TELEFONE,CPF) VALUES('LILIAN','F','SENADOR SOARES - TIJUCA - RIO DE JANEIRO - RJ','947785696',887774856);
+
+INSERT INTO cliente VALUES('JOAO','M','JOAO@GMAIL.COM',988638273,'22923110','MAIA LACERDA - ESTACIO - RIO DE JANEIRO - RJ');
+
+INSERT INTO cliente VALUES('CELIA','F','CELIA@GMAIL.COM',541521456,'25078869','RIACHUELO - CENTRO - RIO DE JANEIRO - RJ');
+
+INSERT INTO cliente VALUES('JORGE','M',NULL,885755896,'58748895','OSCAR CURY - BOM RETIRO - PATOS DE MINAS - MG');
+
+
+SELECT nome AS Cliente,sexo,email, now() AS data_hora
+FROM cliente;
+
+
+SELECT nome AS Cliente,sexo,email,endereco
+FROM cliente
+WHERE endereco LIKE '%RJ';
+
+CREATE TABLE LIVROS(
+	LIVRO VARCHAR(100),
+	AUTOR VARCHAR(100),
+	SEXO CHAR(1),
+	PAGINAS INT(5),
+	EDITORA VARCHAR(30),
+	VALOR FLOAT(10,2),
+	UF CHAR(2),
+	ANO INT(4));
+
+
+
+INSERT INTO LIVROS VALUES('Cavaleiro Real','Ana Claudia','F',465,'Atlas',49.9,'RJ',2009);
+INSERT INTO LIVROS VALUES('SQL para leigos','João Nunes','M',450,'Addison',98,'SP',2018);
+INSERT INTO LIVROS VALUES('Receitas Caseiras','Celia Tavares','F',210,'Atlas',45,'RJ',2008);
+INSERT INTO LIVROS VALUES('Pessoas Efetivas','Eduardo Santos','M',390,'Beta',78,'RJ',2018);
+INSERT INTO LIVROS VALUES('Habitos Saudáveis','Eduardo Santos','M',630,'Beta',150,'RJ',2019);
+INSERT INTO LIVROS VALUES('A Casa Marrom','Hermes Macedo','M',250,'Bubba',60,'MG',2016);
+INSERT INTO LIVROS VALUES('Estacio Querido','Geraldo Francisco','M',310,'Insignia',100,'ES',2015);
+INSERT INTO LIVROS VALUES('Pra sempre amigas','Leda Silva','F',510,'Insignia',78,'ES',2011);
+INSERT INTO LIVROS VALUES('Copas Inesqueciveis','Marco Alcantara','M',200,'Larson',130,'RS',2018);
+INSERT INTO LIVROS VALUES('O poder da mente','Clara Mafra','F',120,'Continental',56,'SP',2017);
+
+
+SELECT * 
+FROM LIVROS;
+
+
+SELECT LIVRO, editora
+FROM LIVROS;
+
+
+select LIVRO, uf
+from LIVROS
+WHERE sexo = 'M';
+
+
+select LIVRO, paginas
+from LIVROS
+WHERE sexo = 'F';
+
+
+select Livro, valor
+from LIVROS
+WHERE UF = 'SP';
+
+
+select autor, sexo, uf
+from LIVROS
+WHERE sexo = 'M'
+AND UF = 'SP' 
+OR UF = 'RJ';
+ 
+
+SELECT sexo, count(*)
+FROM LIVROS
+GROUP by sexo;
+
+select *
+from LIVROS;
+
+SELECT uf, sexo, count(*)
+FROM LIVROS
+WHERE sexo = 'F' OR UF = 'RJ'
+GROUP BY sexo, uf;
+
+CREATE table funcionarios
+  (
+      idFuncionario integer,
+      nome varchar(100),
+      email varchar(200),
+      sexo varchar(10),
+      departamento varchar(100),
+      admissao varchar(10),
+      salario integer,
+      cargo varchar(100),
+      idRegiao int
+  );
+
+
+
+DESC funcionarios;
+
+SELECT  departamento, count(*) AS total
+FROM funcionarios
+GRoup by departamento
+ORDER BY 2 DESC
+
+
+
+SELECT IdFuncionario, nome, departamento
+FROM funcionarios
+WHERE departamento = 'Roupas' OR departamento = 'Filmes';
+
+
+SELECT idfuncionario, nome, email, departamento, sexo
+FROM funcionarios
+WHERE  departamento = 'Lar' AND sexo = 'Feminino'
+OR 
+departamento = 'Filmes' AND sexo = 'Feminino';
+ 
+
+
+SELECT idfuncionario, nome, departamento, sexo
+FROM funcionarios
+WHERE sexo = 'Masculino' OR departamento = 'Jardim';
+
+
+SELECT nome, email
+FROm funcionarios
+ORDER By nome
+
+SELECT email
+FROM funcionarios
+WHERE nome = 'Garrett'
+
+UPDATE funcionarios
+SET email = 'garrett2@hotmail.com'
+WHERE nome = 'Garrett'
+
+SELECT EMAIL 
+FROM funcionarios
+WHERE email = 'garrett%'
+
+
+SELECT *
+FROM cliente
+
+
+
+
+create TABLE cliente(
+  IDcliente INT primary key auto_increment,
+  Nome varchar(30) not null,
+  Sexo enum('M', 'F') NOT NULL,
+  email varchar(50) UNIQUE,
+  CPF varchar(15) UNIQUE 
+  );
+  
+  create table enderecos (
+   IDendereco INT primary key auto_increment,
+   rua varchar(30) NOT NULL,
+   bairro varchar(30) not null,
+   cidade varchar(30) not null,
+   estado char(2) not null,
+    ID_CLIENTE INT UNIQUE,
+	FOREIGN KEY(ID_cliente)
+	REFERENCES cliente(IDcliente)
+  );
+  
+  create TABLE telefones (
+     IDtelefone INT primary key auto_increment,
+     tipo ENUM('RES', 'COM', 'CEL') NOT null,
+     numero varchar(10) NOT NULL,
+    ID_CLIENTE INT,
+	FOREIGN KEY(ID_cliente)
+	REFERENCES cliente(IDcliente)
+    );
+
+
+
+INSERT INTO cliente VALUES(NULL,'JOAO','M','JOAOA@IG.COM','76567587887');
+INSERT INTO cliente VALUES(NULL,'CARLOS','M','CARLOSA@IG.COM','5464553466');
+INSERT INTO cliente VALUES(NULL,'ANA','F','ANA@IG.COM','456545678');
+INSERT INTO cliente VALUES(NULL,'CLARA','F',NULL,'5687766856');
+INSERT INTO cliente VALUES(NULL,'JORGE','M','JORGE@IG.COM','8756547688');
+INSERT INTO cliente VALUES(NULL,'CELIA','M','JCELIA@IG.COM','5767876889');
+
+
+
+INSERT INTO enderecos VALUES(NULL,'RUA ANTONIO SA','CENTRO','B. HORIZONTE','MG',4);
+INSERT INTO enderecos VALUES(NULL,'RUA CAPITAO HERMES','CENTRO','RIO DE JANEIRO','RJ',1);
+INSERT INTO enderecos VALUES(NULL,'RUA PRES VARGAS','JARDINS','SAO PAULO','SP',3);
+INSERT INTO enderecos VALUES(NULL,'RUA ALFANDEGA','ESTACIO','RIO DE JANEIRO','RJ',2);
+INSERT INTO enderecos VALUES(NULL,'RUA DO OUVIDOR','FLAMENGO','RIO DE JANEIRO','RJ',6);
+INSERT INTO enderecos VALUES(NULL,'RUA URUGUAIANA','CENTRO','VITORIA','ES',5);
+
+
+INSERT INTO telefones VALUES(NULL,'CEL','78458743',5);
+INSERT INTO telefones VALUES(NULL,'RES','56576876',5);
+INSERT INTO telefones VALUES(NULL,'CEL','87866896',1);
+INSERT INTO telefones VALUES(NULL,'COM','54768899',2);
+INSERT INTO telefones VALUES(NULL,'RES','99667587',1);
+INSERT INTO telefones VALUES(NULL,'CEL','78989765',3);
+INSERT INTO telefones VALUES(NULL,'CEL','99766676',3);
+INSERT INTO telefones VALUES(NULL,'COM','66687899',1);
+INSERT INTO telefones VALUES(NULL,'RES','89986668',5);
+INSERT INTO telefones VALUES(NULL,'CEL','88687909',2);
+
+
+
+INSERT INTO cliente VALUES(NULL,'PAULA','M',NULL,'77437493');
+INSERT INTO enderecos VALUES(NULL,'RUA JOAQUIM SILVA','ALVORADA','NITEROI','RJ',7);
+
+
+
+CREATE TABLE produto(
+	idproduto INT PRIMARY KEY AUTO_INCREMENT,
+	nome_produto VARCHAR(30) NOT NULL,
+	preco INT,
+	frete FLOAT(10,2) NOT NULL
+);
+
+
+ALTER TABLE produto
+CHANGE preco valor_unitario INT NOT NULL;
+
+
+ALTER TABLE produto
+ADD COLUMN PESO FLOAT(10,2) NOT NULL
+AFTER nome_produto
+
+
+SHOW tables
+
+SELECT * 
+FROM cliente
+
+
+
+
+INSERT INTO cliente VALUES(NULL,'FLAVIO','M','FLAVIO@IG.COM','4657765');
+INSERT INTO cliente VALUES(NULL,'ANDRE','M','ANDRE@GLOBO.COM','7687567');
+INSERT INTO cliente VALUES(NULL,'GIOVANA','F',NULL,'0876655');
+INSERT INTO cliente VALUES(NULL,'KARLA','M','KARLA@GMAIL.COM','545676778');
+INSERT INTO cliente VALUES(NULL,'DANIELE','M','DANIELE@GMAIL.COM','43536789');
+INSERT INTO cliente VALUES(NULL,'LORENA','M',NULL,'774557887');
+INSERT INTO cliente VALUES(NULL,'EDUARDO','M',NULL,'54376457');
+INSERT INTO cliente VALUES(NULL,'ANTONIO','F','ANTONIO@IG.COM','12436767');
+INSERT INTO cliente VALUES(NULL,'ANTONIO','M','ANTONIO@UOL.COM','3423565');
+INSERT INTO cliente VALUES(NULL,'ELAINE','M','ELAINE@GLOBO.COM','32567763');
+INSERT INTO cliente VALUES(NULL,'CARMEM','M','CARMEM@IG.COM','787832213');
+INSERT INTO cliente VALUES(NULL,'ADRIANA','F','ADRIANA@GMAIL.COM','88556942');
+INSERT INTO cliente VALUES(NULL,'JOICE','F','JOICE@GMAIL.COM','55412256');
+
+
+
+INSERT INTO enderecos VALUES(NULL,'RUA GUEDES','CASCADURA','B. HORIZONTE','MG',8);
+INSERT INTO enderecos VALUES(NULL,'RUA MAIA LACERDA','ESTACIO','RIO DE JANEIRO','RJ',9);
+INSERT INTO enderecos VALUES(NULL,'RUA VISCONDESSA','CENTRO','RIO DE JANEIRO','RJ',10);
+INSERT INTO enderecos VALUES(NULL,'RUA NELSON MANDELA','COPACABANA','RIO DE JANEIRO','RJ',11);
+INSERT INTO enderecos VALUES(NULL,'RUA ARAUJO LIMA','CENTRO','VITORIA','ES',12);
+INSERT INTO enderecos VALUES(NULL,'RUA CASTRO ALVES','LEBLON','RIO DE JANEIRO','RJ',13);
+INSERT INTO enderecos VALUES(NULL,'AV CAPITAO ANTUNES','CENTRO','CURITIBA','PR',14);
+INSERT INTO enderecos VALUES(NULL,'AV CARLOS BARROSO','JARDINS','SAO PAULO','SP',15);
+INSERT INTO enderecos VALUES(NULL,'ALAMEDA SAMPAIO','BOM RETIRO','CURITIBA','PR',16);
+INSERT INTO enderecos VALUES(NULL,'RUA DA LAPA','LAPA','SAO PAULO','SP',17);
+INSERT INTO enderecos VALUES(NULL,'RUA GERONIMO','CENTRO','RIO DE JANEIRO','RJ',18);
+INSERT INTO enderecos VALUES(NULL,'RUA GOMES FREIRE','CENTRO','RIO DE JANEIRO','RJ',19);
+INSERT INTO enderecos VALUES(NULL,'RUA GOMES FREIRE','CENTRO','RIO DE JANEIRO','RJ',20);
+
+
+INSERT INTO telefones VALUES(NULL,'RES','68976565',8);
+INSERT INTO telefones VALUES(NULL,'CEL','99656675',8);
+INSERT INTO telefones VALUES(NULL,'CEL','33567765',10);
+INSERT INTO telefones VALUES(NULL,'CEL','88668786',10);
+INSERT INTO telefones VALUES(NULL,'COM','55689654',10);
+INSERT INTO telefones VALUES(NULL,'COM','88687979',11);
+INSERT INTO telefones VALUES(NULL,'COM','88965676',12);
+INSERT INTO telefones VALUES(NULL,'CEL','89966809',14);
+INSERT INTO telefones VALUES(NULL,'COM','88679978',15);
+INSERT INTO telefones VALUES(NULL,'CEL','99655768',16);
+INSERT INTO telefones VALUES(NULL,'RES','89955665',17);
+INSERT INTO telefones VALUES(NULL,'RES','77455786',18);
+INSERT INTO telefones VALUES(NULL,'RES','89766554',18);
+INSERT INTO telefones VALUES(NULL,'RES','77755785',19);
+INSERT INTO telefones VALUES(NULL,'COM','44522578',19);
+INSERT INTO telefones VALUES(NULL,'COM','44522578',20);
+
+
+
+
+select *
+from cliente
+WHERE sexo = 'F'
+
+ 
+select  c.IDcliente, c.Nome, c.Sexo, c.email, c.CPF, 
+		e.rua, e.bairro, e.cidade, e.estado, 
+		t.tipo, t.numero
+from cliente AS c
+INNER JOIN enderecos AS e
+ON c.IDcliente = e.ID_CLIENTE
+INNER JOIN telefones AS t
+ON c.IDcliente = t.ID_CLIENTE
+
+
+select  c.IDcliente, c.Nome, c.Sexo, c.email, c.CPF, 
+		e.rua, e.bairro, e.cidade, e.estado, 
+		t.tipo, t.numero
+from cliente AS c
+INNER JOIN enderecos AS e
+ON c.IDcliente = e.ID_CLIENTE
+INNER JOIN telefones AS t
+ON c.IDcliente = t.ID_CLIENTE
+WHERE sexo = 'M'
+
+
+UPDATE cliente 
+SET sexo = 'F'
+where idcliente IN (6, 7, 11, 12, 13, 17, 18)
+
+
+
+
+
+select  c.IDcliente, c.Nome, c.Sexo, c.email, c.CPF,
+		e.rua, e.bairro, e.cidade, e.estado,
+		t.tipo, t.numero
+from cliente AS c
+INNER JOIN enderecos AS e
+ON c.IDcliente = e.ID_CLIENTE
+INNER JOIN telefones AS t
+ON c.IDcliente = t.ID_CLIENTE
+WHERE sexo = 'F'
+
+UPDATE cliente 
+SET sexo = 'M'
+where idcliente = 15
+
+
+
+SELECT sexo, count(*)
+FROM cliente
+GROUP BY sexo
+
+
+select c.idcliente, c.email, c.nome, e.bairro, t.tipo
+FROM cliente AS c
+INNER JOIN enderecos AS e
+ON c.IDcliente = e.ID_CLIENTE
+INNER JOIN telefones AS t
+ON c.IDcliente = t.ID_CLIENTE
+WHERE c.sexo = 'F' AND e.estado = 'RJ'
+and e.bairro = 'CENTRO'
+AND (t.tipo = 'RES' OR t.tipo = 'COM');
+
+
+
+select c.idcliente, c.email, c.nome, e.estado, t.numero
+FROM cliente AS c
+INNER JOIN enderecos AS e
+ON c.IDcliente = e.ID_CLIENTE
+INNER JOIN telefones AS t
+ON c.IDcliente = t.ID_CLIENTE
+WHERE  e.estado = 'RJ' AND t.tipo = 'CEL'
+
+
+select c.idcliente, c.email, c.nome, e.estado, t.numero
+FROM cliente AS c
+INNER JOIN enderecos AS e
+ON c.IDcliente = e.ID_CLIENTE
+INNER JOIN telefones AS t
+ON c.IDcliente = t.ID_CLIENTE
+WHERE  e.estado = 'SP' AND c.sexo = 'F'
+
+
+
+CREATE TABLE VENDEDORES(
+	IDVENDEDOR INT PRIMARY KEY AUTO_INCREMENT,
+	NOME VARCHAR(30),
+	SEXO CHAR(1),
+	JANEIRO FLOAT(10,2),
+	FEVEREIRO FLOAT(10,2),
+	MARCO FLOAT(10,2));
+  
+  
+INSERT INTO VENDEDORES VALUES(NULL,'CARLOS','M',76234.78,88346.87,5756.90);
+INSERT INTO VENDEDORES VALUES(NULL,'MARIA','F',5865.78,6768.87,4467.90);
+INSERT INTO VENDEDORES VALUES(NULL,'ANTONIO','M',78769.78,6685.87,6664.90);
+INSERT INTO VENDEDORES VALUES(NULL,'CLARA','F',5779.78,446886.87,8965.90);
+INSERT INTO VENDEDORES VALUES(NULL,'ANDERSON','M',676545.78,77544.87,578665.90);
+INSERT INTO VENDEDORES VALUES(NULL,'IVONE','F',57789.78,44774.87,68665.90);
+INSERT INTO VENDEDORES VALUES(NULL,'JOAO','M',4785.78,66478.87,6887.90);
+INSERT INTO VENDEDORES VALUES(NULL,'CELIA','F',89667.78,57654.87,5755.90);
+
+
+
+
+select nome, min(marco)
+from VENDEDORES
+GROUP by nome
+order by min(marco) 
+limit 1
+ 
+
+
+
+SELECT NOME, MARCO FROM VENDEDORES
+WHERE MARCO > (SELECT AVG(MARCO) FROM VENDEDORES);
+
+
+
+with media_venda AS ( 
+  SELECT nome, AVG(MARCO) AS media
+  FROM VENDEDORES
+
+  group by nome
+	order by media DESC)
+
+SELECT  *
+from media_venda
+ 
+                     
+                     
+                 
+
+CREATE TABLE teste(
+	IDCLIENTE INT,
+	NOME VARCHAR(30) NOT NULL
+);
+
+CREATE TABLE teste2(
+	IDTELEFONE INT,
+	TIPO CHAR(3) NOT NULL,
+	NUMERO VARCHAR(10) NOT NULL,
+	ID_CLIENTE INT
+);
+
+
+ALTER TABLE teste 
+ADD constraint PK_CLIENTE
+PRIMARY KEY(IDCLIENTE);
+
+ALTER TABLE teste2 
+ADD CONSTRAINT FK_TESTE_TESTE2
+FOREIGN KEY (ID_CLIENTE) 
+REFERENCES teste(IDCLIENTE);
+
+
+SHOW CREATE TABLE teste2
+
+
+SELECT CONSTRAINT_SCHEMA AS "BANCO",
+	   TABLE_NAME AS "TABELA",
+	   CONSTRAINT_NAME AS "NOME REGRA",
+	   CONSTRAINT_TYPE AS "TIPO"
+	   FROM TABLE_CONSTRAINTS
+	   WHERE CONSTRAINT_SCHEMA = 'COMERCIO';
+
+
+
+
+
+
+
+DROP 
+DROP  TABLE CLIENTE(
+	IDCLIENTE INT PRIMARY KEY AUTO_INCREMENT,
+	NOME VARCHAR(30) NOT NULL,
+	SEXO ENUM('M','F') NOT NULL,
+	ID_CARRO INT UNIQUE
+);
+
+DROP TABLE TELEFONE(
+	IDTELEFONE INT PRIMARY KEY AUTO_INCREMENT,
+	TIPO ENUM('CEL','RES','COM') NOT NULL,
+	NUMERO VARCHAR(30) NOT NULL,
+	ID_CLIENTE INT 
+);
+
+DROP TABLE MARCA(
+	IDMARCA INT PRIMARY KEY AUTO_INCREMENT,
+	MARCA VARCHAR(30) UNIQUE
+);
+
+DROP TABLE CARRO(
+	IDCARRO INT PRIMARY KEY AUTO_INCREMENT,
+	MODELO VARCHAR(30) NOT NULL,
+	PLACA VARCHAR(30) NOT NULL UNIQUE,
+	ID_MARCA INT
+);
+
+DROP TABLE COR(
+	IDCOR INT PRIMARY KEY AUTO_INCREMENT,
+	COR VARCHAR(30) UNIQUE
+);
+
+DROP TABLE CARRO_COR(
+	ID_CARRO INT,
+	ID_COR INT,
+	PRIMARY KEY(ID_CARRO,ID_COR)
+);
+
+
+
+
+
+
+
+
+ALTER TABLE TELEFONE 
+ADD CONSTRAINT FK_TELEFONE_CLIENTE
+FOREIGN KEY(ID_CLIENTE)
+REFERENCES CLIENTE(IDCLIENTE);
+
+
+ALTER TABLE CLIENTE
+ADD CONSTRAINT FK_CLIENTE_CARRO
+FOREIGN KEY(ID_CARRO)
+REFERENCES CARRO(IDCARRO);
+
+
+ALTER TABLE CARRO
+ADD CONSTRAINT FK_CARRO_MARCA
+FOREIGN KEY(ID_MARCA)
+REFERENCES MARCA(IDMARCA);
+
+
+ALTER TABLE CARRO_COR
+ADD CONSTRAINT FK_COR
+FOREIGN KEY(ID_COR)
+REFERENCES COR(IDCOR);
+
+
+ALTER TABLE CARRO_COR
+ADD CONSTRAINT FK_CARRO
+FOREIGN KEY(ID_CARRO)
+REFERENCES CARRO(IDCARRO);
+
+
+
+
+
+CREATE TABLE usuario (
+  idusuario INT PRIMARY KEY AUTO_INCREMENT,
+  nome VARCHAR(30),
+  login VARCHAR(30),
+  senha VARCHAR(100)
+);
+
+CREATE TABLE bkp_usuario(
+  idbackup INT PRIMARY KEY AUTO_INCREMENT,
+  idusuario INT,
+  nome VARCHAR(30),
+  login VARCHAR(30));
+
+
+
+CREATE TRIGGER BACKUP_USER
+BEFORE DELETE ON usuario
+FOR EACH ROW
+BEGIN
+	INSERT INTO bkp_usuario
+   	VALUES(NULL, OLD.idusuario, OLD.nome, OLD.login);
+END;
+
+
+INSERT INTO usuario 
+VALUEs(NULL, 'Andrade', 'andrade2009', 'hexacampeao');
+
+
+
+select *
+FROM usuario
+
+CREATE TABLE produto(
+  idproduto INT PRIMARY KEY AUTO_INCREMENT,
+  nome varchar(30),
+  valor float(10,2));
+  
+  
+
+CREATE TABLE bkp_produto(
+	idbkp INT PRIMARY KEY AUTO_INCREMENT,
+	idproduto INT,
+	nome VARCHAR(30),
+	valor FLOAT(10,2));
+
+
+INSERT INTO bkp_produto 
+VALUES(NULL, 1000, 'TESTE', 0.0);
+
+
+
+CREATE TRIGGER backup_produto
+AFTER INSERT ON produto
+FOR EACH ROW
+BEGIN
+INSERT INTO bkp_produto
+VALUES(NULL, new.idproduto, new.nome, new.valor);
+END;
+
+
+INSERT INTO produto values (null, 'livro modelagem', 50.00);
+INSERT INTO produto values (null, 'livro power bi', 80.00);
+INSERT INTO produto values (null, 'livro oracle', 70.00);
+INSERT INTO produto values (null, 'livro sql server', 100.00);
+INSERT INTO produto values (null, 'livro c#', 100.00);
+INSERT INTO produto values (null, 'livro phyton#', 120.00);
+
+
+select * from produto 
+
+select * from bkp_produto
+
+
+CREATE TRIGGER backup_produto_del
+BEFORE DELETE ON produto
+FOR EACH ROW
+BEGIN
+INSERT INTO bkp_produto
+VALUES(NULL, old.idproduto, old.nome, old.valor);
+END;
+
+
+delete from produto where idproduto = 4
+
+
+ALTER TABLE bkp_produto
+ADD evento CHAR(1);
+
+
+
+CREATE TRIGGER backup_produto_del
+BEFORE DELETE ON produto
+FOR EACH ROW
+BEGIN
+INSERT INTO bkp_produto
+VALUES(NULL, old.idproduto, old.nome, old.valor, 'D');
+END;
+
+
+
+
+CREATE TRIGGER backup_produto
+AFTER INSERT ON produto
+FOR EACH ROW
+BEGIN
+INSERT INTO bkp_produto
+VALUES(NULL, new.idproduto, new.nome, new.valor,'I');
+END;
+
+drop trigger backup_produto
+drop table bkp_produto
+
+
+
+create TABLE produto(
+	idproduto INT PRIMARY KEY AUTO_INCREMENT,
+	nome VARCHAR(30),
+	valor FLOAT(10,2)
+);
+
+INSERT INTO produto VALUES(NULL,'LIVRO MODELAGEM',50.00);
+INSERT INTO produto VALUES(NULL,'LIVRO BI',80.00);
+INSERT INTO produto VALUES(NULL,'LIVRO ORACLE',70.00);
+INSERT INTO produto VALUES(NULL,'LIVRO SQL SERVER',100.00);
+
+
+CREATE table bkp_produto (
+	idbackup INT primary key auto_increment,
+    idproduto INT,
+    nome varchar(30),
+    valor_original float(10,2),
+    valor_alterado float (10,2),
+    DATA DATETIME,
+    usuario varchar(30),
+    evento char(1));
+
+
+select * from produto
+
+
+
+CREATE TRIGGER audit_prod
+AFTER UPDATE ON produto
+FOR EACH ROW
+BEGIN
+	INSERT INTO bkp_produto VALUES(NULL,old.idproduto, old.nome, old.valor,
+                new.valor, now(), current_user(), 'U');
+
+END;
+
+
+update produto
+set valor = 110.00  
+where idproduto = 4;
+
+
+select *
+FROM produto
+
+select *
+from bkp_produto
+
+
+
+CREATE TABLE cursos(
+  idcurso INT primary key auto_increment,
+  nome varchar(30),
+  horas int,
+  valor float(10,2),
+  id_prereq int);
+  
+  
+alter table cursos add constraint fk_prereq
+foreign key (id_prereq)references cursos(idcurso);
+
+
+INSERT INTO cursos VALUES(NULL,'BD RELACIONAL',20,400.00,NULL);
+INSERT INTO cursos VALUES(NULL,'BUSINESS INTELLIGENCE',40,800.00,1);
+INSERT INTO cursos VALUES(NULL,'RELATORIOS AVANCADOS',20,600.00,2);
+INSERT INTO cursos VALUES(NULL,'LOGICA PROGRAM',20,400.00,NULL);
+INSERT INTO cursos VALUES(NULL,'RUBY',30,500.00,4);
+
+
+
+SELECT c.nome as curso, c.valor as valor, c.horas as carga,
+IFNULL(p.nome, "---") as prereq
+FROM cursos c
+LEFT JOIN cursos p
+ON c.idcurso = p.id_prereq;
+
+
+CREATE TABLE vendedores(
+  idvendedor int primary key auto_increment, 
+  nome varchar(50),
+  jan int, 
+  fev int,
+  mar int
+  );
+
+
+INSERT INTO vendedores VALUES(NULL,'MAFRA',32432,242334,574545);
+INSERT INTO vendedores VALUES(NULL,'CLARA',65465,65443,653454);
+INSERT INTO vendedores VALUES(NULL,'JOAO',12432,65356,8756);
+INSERT INTO vendedores VALUES(NULL,'LILIAN',4567,9676,8765);
+INSERT INTO vendedores VALUES(NULL,'ANTONIO',3467,68756,99765);
+INSERT INTO vendedores VALUES(NULL,'GLORIA',54786,76889,7098);
+
+
+SELECT nome, (jan+fev+mar) AS total
+from vendedores
+
+SELECT nome, (jan+fev+mar) AS total, (jan+fev+mar)/3 AS media
+from vendedores
+
+
+create table vend_total(
+  nome varchar(50),
+  jan int, 
+  fev int,
+  mar int,
+  total int,
+  media int);
+
+
+
+CREATE procedure inseredados()
+BEGIN
+	declare fim int default 0;
+    declare var1, var2, var3, vtotal, vmedia int;
+    declare vnome varchar(50);
+	
+    declare reg CURSOR FOR (
+      select nome, jan, fev, mar from vendedores
+      );
+      
+   	declare continue handler for not found set fim = 1;
+    
+    open reg; 
+    REPEAT 
+    	FETCH reg into vnome, var1, var2, var3;
+        IF not FIM then 
+        	set vtotal = var1 + var2 + var3;
+            SET vmedia = vtotal / 3;
+        	insert into vend_total values(vnome, var1, var2, var3, vtotal, vmedia);
+        END IF;
+    UNTIL FIM END repeat;
+    CLOSE reg;
+end;
+
+
+select * from vendedores
+
+select * from vend_total
+
+
+CALL inseredados();
+
+
+
+
+
+CREATE TABLE PACIENTE(
+	IDPACIENTE INT PRIMARY KEY AUTO_INCREMENT,
+	NOME VARCHAR(30),
+	SEXO CHAR(1),
+	EMAIL VARCHAR(30),
+	NASCIMENTO DATE
+);
+
+CREATE TABLE MEDICO(
+	IDMEDICO INT PRIMARY KEY AUTO_INCREMENT,
+	NOME VARCHAR(30),
+	SEXO char,
+	ESPECIALIDADE VARCHAR(30),
+	FUNCIONARIO ENUM('S','N')
+);
+
+CREATE TABLE HOSPITAL(
+	IDHOSPITAL INT PRIMARY KEY AUTO_INCREMENT,
+	NOME VARCHAR(30),
+	BAIRRO VARCHAR(30),
+	CIDADE VARCHAR(30),
+	ESTADO CHAR(2)
+);
+
+CREATE TABLE CONSULTA(
+	IDCONSULTA INT PRIMARY KEY AUTO_INCREMENT,
+	ID_PACIENTE INT,
+	ID_MEDICO INT,
+	ID_HOSPITAL INT,
+	DATA DATETIME,
+	DIAGNOSTICO VARCHAR(50)
+);
+
+CREATE TABLE INTERNACAO(
+	IDINTERNACAO INT PRIMARY KEY AUTO_INCREMENT,
+	ENTRADA DATETIME,
+	QUARTO INT,
+	SAIDA DATETIME,
+	OBSERVACOES VARCHAR(50),
+	ID_CONSULTA INT UNIQUE	
+);  
+
+
+
+ALTER TABLE CONSULTA ADD CONSTRAINT FK_CONSULTA_PACIENTE
+FOREIGN KEY(ID_PACIENTE) REFERENCES PACIENTE(IDPACIENTE);
+
+ALTER TABLE CONSULTA ADD CONSTRAINT FK_CONSULTA_MEDICO
+FOREIGN KEY(ID_MEDICO) REFERENCES MEDICO(IDMEDICO);
+
+ALTER TABLE CONSULTA ADD CONSTRAINT FK_CONSULTA_HOSPITAL
+FOREIGN KEY(ID_HOSPITAL) REFERENCES HOSPITAL(IDHOSPITAL);
+
+ALTER TABLE INTERNACAO ADD CONSTRAINT FK_INTERNACAO_CONSULTA
+FOREIGN KEY(ID_CONSULTA) REFERENCES CONSULTA(IDCONSULTA);
+
+
+
+
+
+
+
+
+
