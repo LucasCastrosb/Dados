@@ -1,0 +1,148 @@
+--QUERY 1
+
+SELECT 
+	CASE
+    	when gen.gender = 'male' then 'homens'
+        when gen.gender = 'female' then 'mulheres'
+        END as "gênero",
+        count(*) AS leads
+FROM sales.customers AS cus
+LEFT JOIN temp_tables.ibge_genders AS gen
+ON lower(cus.first_name) = lower(gen.first_name)
+GROUP by gen.gender
+
+
+--2 query
+
+Select 
+	CASE
+    	when professional_status =  'freelancer' then 'Freelancer'
+		when professional_status = 'retired' then 'Aposentado(a)'
+        when professional_status = 'clt' then 'CLT'
+        when professional_status = 'self_employed' then 'Autônomo(a)'
+        when professional_status = 'other' then 'Outro'
+        when professional_status = 'businessman' then 'Empresário(a)'
+        when professional_status = 'civil_servant' then 'Funcionáro Público(a)'
+        when professional_status = 'student' then 'Estudante'
+        END AS status_pro,
+		(count(*)::float)/(select count(*) from sales.customers) AS leads_porcent
+from sales.customers
+GRoup by professional_status
+order by leads_porcent
+
+
+
+--QUERY 3
+
+SELECT
+	CASE	
+    	when datediff('years',birth_date, CURRENT_DATE) < 20 then '0-20'
+        when datediff('years',birth_date, CURRENT_DATE) < 40 then '20-40'
+        when datediff('years',birth_date, CURRENT_DATE) < 60 then '40-60'
+        when datediff('years',birth_date, CURRENT_DATE) < 80 then '60-80'
+        ELSE '80+' END AS faixa_etaria,
+		(count(*)::float)/(select count(*) from sales.customers) AS leads_porcent
+FROm sales.customers
+group by faixa_etaria
+ORDER BY faixa_etaria
+
+
+
+
+SELECT
+	CASE	
+    	when income < 5000 then '0-5000'
+        when income < 10000 then '5000-10000'
+        when income < 15000 then '10000-15000'
+        when income < 20000 then '15000-20000'
+        ELSE '20000+' END AS faixa_salarial,
+		(count(*)::float)/(select count(*) from sales.customers) AS leads_porcent,
+        CASE	
+    	when income < 5000 then '1'
+        when income < 10000 then '2'
+        when income < 15000 then '3'
+        when income < 20000 then '4'
+        ELSE '5' END  ordem
+FROm sales.customers
+group by faixa_salarial, ordem
+ORDER BY ordem DESC
+ 
+
+
+
+WITH
+ classificacao_veiculos AS (
+   SELECT 
+   	fun.visit_page_date,
+   	pro.model_year,
+   	Extract('year' from visit_page_date) - pro.model_year::int  AS idade_veiculo,
+    CASE
+   		when (Extract('year' from visit_page_date) - pro.model_year::int)<= 4 then 'novo'
+   		ELSE 'seminovo'
+   		END classificacao_do_veiculo
+   FROM sales.funnel as fun
+   left join sales.products as pro
+   on fun.product_id = pro.product_id)
+   
+   
+   select 	classificacao_do_veiculo,
+   			count(*) as veiculos_visitados
+   FROM classificacao_veiculos
+   group by classificacao_do_veiculo
+   
+   
+
+
+
+--QUERY 6
+
+
+WITH
+ faixa_idade_veiculos AS (
+   SELECT 
+   	fun.visit_page_date,
+   	pro.model_year,
+   	Extract('year' from visit_page_date) - pro.model_year::int  AS idade_veiculo_fun,
+    CASE
+   		when (Extract('year' from visit_page_date) - pro.model_year::int)<= 2 then 'Até 2 anos'
+      	when (Extract('year' from visit_page_date) - pro.model_year::int)<= 4 then 'De 2 a 4 anos'
+   		when (Extract('year' from visit_page_date) - pro.model_year::int)<= 6 then 'De 4 a 6 anos'
+   		when (Extract('year' from visit_page_date) - pro.model_year::int)<= 8 then 'De 6 a 8 anos'
+   		when (Extract('year' from visit_page_date) - pro.model_year::int)<= 10 then 'De 8 10'
+		ELSE 'Acima de 10 anos'
+   		END idade_veiculo,
+  	CASE
+   		when (Extract('year' from visit_page_date) - pro.model_year::int)<= 2 then '1'
+      	when (Extract('year' from visit_page_date) - pro.model_year::int)<= 4 then '2'
+   		when (Extract('year' from visit_page_date) - pro.model_year::int)<= 6 then '3'
+   		when (Extract('year' from visit_page_date) - pro.model_year::int)<= 8 then '4'
+   		when (Extract('year' from visit_page_date) - pro.model_year::int)<= 10 then '5'
+		ELSE '6'
+   		END ordem
+   FROM sales.funnel as fun
+   left join sales.products as pro
+   on fun.product_id = pro.product_id)
+ 
+
+   select idade_veiculo,
+   count(*)::FLOAT/(select count(*) from sales.funnel) as veiculos_visitados_porcent,
+   ordem
+   FROM faixa_idade_veiculos
+   group by idade_veiculo, ordem
+   order by ordem
+   
+   
+
+-- QUERY 7
+SELECT 
+	brand,
+    model,
+    Count(*)  AS visitas
+    
+from sales.funnel AS fun
+left join sales.products as pro
+on fun.product_id = pro.product_id
+group by pro.brand, pro.model
+order by pro.brand, pro.model, visitas
+ 
+
